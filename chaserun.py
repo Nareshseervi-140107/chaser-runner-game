@@ -15,36 +15,13 @@ class GameView(arcade.Window):
         self.player_sprite2 = None
         self.game_over = False
         self.single_player = False
-    def keep_in_rectangle(self, sprite,):
-        dx = Width
-        dy = Height
-        if sprite.center_x > dx:
-            sprite.center_x = dx
-        elif sprite.center_y > dy:
-            sprite.center_y = dy
-        elif sprite.center_x < 60:
-            sprite.center_x = 60
-        elif sprite.center_y < 130:
-            sprite.center_y = 130
-    def ai_control(self, ai_sprite, target_sprite, speed = 7):
-        if target_sprite.center_x > ai_sprite.center_x:
-            ai_sprite.change_x = speed
-        elif target_sprite.center_x < ai_sprite.center_x:
-            ai_sprite.change_x = -speed
-        else:
-            ai_sprite.change_x = 0
-        if target_sprite.center_y > ai_sprite.center_y:
-            ai_sprite.change_y = speed
-        elif target_sprite.center_y < ai_sprite.center_y:
-            ai_sprite.change_y = -speed
-        else:
-            ai_sprite.change_y = 0
+        self.camera = None
     def on_update(self, delta_time):
         self.physics_player1.update()
         self.engine2.update()
+        self.camera.position = self.player_sprite1.position
         if arcade.check_for_collision(self.player_sprite1, self.player_sprite2):
             self.game_over = True
-        
         if self.single_player:
             self.ai_control(self.player_sprite2, self.player_sprite1)
         self.keep_in_rectangle(self.player_sprite1)
@@ -52,9 +29,8 @@ class GameView(arcade.Window):
         return super().on_update(delta_time)
     def setup(self):
         self.background_color = arcade.csscolor.BLACK
-        self.player_texture1 = arcade.load_texture(":resources:images/animated_characters/male_adventurer/maleAdventurer_idle.png")
         self.player_texture2 = arcade.load_texture(":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png")
-        self.player_sprite1 = arcade.Sprite(self.player_texture1)
+        self.player_sprite1 = arcade.Sprite("chaser runner/Pasted image.png",scale = 0.2)
         self.player_sprite1.center_x = WINDOW_WIDTH/2
         self.player_sprite1.center_y = WINDOW_HEIGHT/1.35
         self.player_sprite2 = arcade.Sprite(self.player_texture2)
@@ -63,26 +39,28 @@ class GameView(arcade.Window):
         self.obstacles = arcade.SpriteList()
         square1 = arcade.SpriteCircle(obrad,arcade.color.RED,False,300,250)
         self.obstacles.append(square1)
-        square2 = arcade.SpriteCircle(obrad,arcade.color.BLUE,False,960,200)
+        square2 = arcade.SpriteCircle(obrad,arcade.color.RED,False,960,200)
         self.obstacles.append(square2)
-        square3 = arcade.SpriteCircle(obrad,arcade.color.GREEN,False,1600,250)
+        square3 = arcade.SpriteCircle(obrad,arcade.color.RED,False,1600,250)
         self.obstacles.append(square3)
-        square4 = arcade.SpriteCircle(obrad,arcade.color.YELLOW,False,300,750)
+        square4 = arcade.SpriteCircle(obrad,arcade.color.RED,False,300,750)
         self.obstacles.append(square4)
-        square5 = arcade.SpriteCircle(obrad,arcade.color.PURPLE,False,960,900)
+        square5 = arcade.SpriteCircle(obrad,arcade.color.RED,False,960,900)
         self.obstacles.append(square5)
-        square6 = arcade.SpriteCircle(obrad,arcade.color.MAGENTA,False,1600,750)
+        square6 = arcade.SpriteCircle(obrad,arcade.color.RED,False,1600,750)
         self.obstacles.append(square6)
-        square7 = arcade.SpriteCircle(40,arcade.color.ORANGE,False,WINDOW_WIDTH/2,WINDOW_HEIGHT/2)
+        square7 = arcade.SpriteCircle(obrad,arcade.color.RED,False,WINDOW_WIDTH/2,WINDOW_HEIGHT/2)
         self.obstacles.append(square7)
-        self.engine2 = arcade.PhysicsEngineSimple(self.player_sprite2)
-        self.physics_player1 = arcade.PhysicsEngineSimple(self.player_sprite1, self.obstacles)
+        self.engine2 = arcade.PhysicsEngineSimple(self.player_sprite1)
+        self.physics_player1 = arcade.PhysicsEngineSimple(self.player_sprite2, self.obstacles)
+        self.camera = arcade.Camera2D()
     def on_draw(self):
         self.clear()
         arcade.draw_lbwh_rectangle_outline(20,60,Width,Height,arcade.color.RED,border_width=10)
         if self.game_over:
             arcade.draw_text("GAME OVER",WINDOW_WIDTH / 2,WINDOW_HEIGHT / 2,arcade.color.WHITE,font_size=80,anchor_x="center",anchor_y="center")
             return
+        self.camera.use()
         arcade.draw_sprite(self.player_sprite1)
         arcade.draw_sprite(self.player_sprite2)
         self.obstacles.draw()
@@ -125,6 +103,30 @@ class GameView(arcade.Window):
         elif symbol == arcade.key.D:
             self.player_sprite2.change_x = 0
         return super().on_key_release(symbol, modifiers)
+    def keep_in_rectangle(self, sprite,):
+        dx = Width
+        dy = Height
+        if sprite.center_x > dx:
+            sprite.center_x = dx
+        elif sprite.center_y > dy:
+            sprite.center_y = dy
+        elif sprite.center_x < 60:
+            sprite.center_x = 60
+        elif sprite.center_y < 130:
+            sprite.center_y = 130
+    def ai_control(self, ai_sprite, target_sprite, speed = 7):
+        if target_sprite.center_x > ai_sprite.center_x:
+            ai_sprite.change_x = speed
+        elif target_sprite.center_x < ai_sprite.center_x:
+            ai_sprite.change_x = -speed
+        else:
+            ai_sprite.change_x = 0
+        if target_sprite.center_y > ai_sprite.center_y:
+            ai_sprite.change_y = speed
+        elif target_sprite.center_y < ai_sprite.center_y:
+            ai_sprite.change_y = -speed
+        else:
+            ai_sprite.change_y = 0
 def main():
     window = GameView()
     window.setup()
