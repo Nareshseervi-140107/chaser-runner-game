@@ -30,7 +30,7 @@ class GameView(arcade.Window):
     def setup(self):
         self.background_color = arcade.csscolor.BLACK
         self.player_texture2 = arcade.load_texture(":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png")
-        self.player_sprite1 = arcade.Sprite("chaser runner/Pasted image.png",scale = 0.2)
+        self.player_sprite1 = arcade.Sprite(":resources:images/animated_characters/female_adventurer/femaleAdventurer_idle.png")
         self.player_sprite1.center_x = WINDOW_WIDTH/2
         self.player_sprite1.center_y = WINDOW_HEIGHT/1.35
         self.player_sprite2 = arcade.Sprite(self.player_texture2)
